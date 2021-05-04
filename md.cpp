@@ -34,6 +34,26 @@ void MD::makeconf(void) {
   vars->set_initial_velocity(1.0);
 }
 
+void MD::make_pair(void){
+  pairs.clear();
+  const int pn = vars->number_of_atoms();
+  Atom *atoms = vars->atoms.data();
+  for (int i = 0; i < pn - 1; i++) {
+    for (int j = i + 1; j < pn; j++) {
+      double dx = atoms[j].qx - atoms[i].qx;
+      double dy = atoms[j].qy - atoms[i].qy;
+      double dz = atoms[j].qz - atoms[i].qz;
+      adjust_periodic(dx, dy, dz);
+      double r2 = (dx * dx + dy * dy + dz * dz);
+      if (r2 > ML2)continue;
+      Pair p;
+      p.i = i;
+      p.j = j;
+      pairs.push_back(p);
+    }
+  }
+}
+
 void MD::update_position(void) {
   const double dt2 = dt * 0.5;
   for (auto &a : vars->atoms) {
@@ -70,6 +90,29 @@ void MD::calculate_force(void) {
   }
 }
 
+void MD::calculate_force_pair(void) {
+  const int pp = pairs.size();
+  Atom *atoms = vars->atoms.data();
+  for (int k = 0; k < pp; k++) {
+    const int i = pairs[k].i;
+    const int j = pairs[k].j;
+    double dx = atoms[j].qx - atoms[i].qx;
+    double dy = atoms[j].qy - atoms[i].qy;
+    double dz = atoms[j].qz - atoms[i].qz;
+    adjust_periodic(dx, dy, dz);
+    double r2 = (dx*dx + dy*dy + dz*dz);
+    if (r2 > CL2) continue;
+    double r6 = r2*r2*r2;
+    double df = (24.0 * r6 - 48.0) / (r6*r6*r2) * dt;
+    atoms[i].px += df*dx;
+    atoms[i].py += df*dy;
+    atoms[i].pz += df*dz;
+    atoms[j].px -= df*dx;
+    atoms[j].py -= df*dy;
+    atoms[j].pz -= df*dz;
+  }
+}
+
 void MD::periodic(void) {
   for (auto &a : vars->atoms) {
     if (a.qx < 0.0) a.qx += L;
@@ -86,7 +129,8 @@ void MD::periodic(void) {
 
 void MD::calculate(void) {
   update_position();
-  calculate_force();
+  make_pair();
+  calculate_force_pair();
   update_position();
   periodic();
   vars->time += dt;
