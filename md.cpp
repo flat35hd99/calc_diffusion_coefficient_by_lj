@@ -9,6 +9,7 @@
 MD::MD(void) {
   vars = new Variables();
   obs = new Observer();
+  margin_length = 0.0;
 }
 
 MD::~MD(void) {
@@ -45,12 +46,26 @@ void MD::make_pair(void){
       double dz = atoms[j].qz - atoms[i].qz;
       adjust_periodic(dx, dy, dz);
       double r2 = (dx * dx + dy * dy + dz * dz);
-      if (r2 > ML2)continue;
+      if (r2 > CL2)continue;
       Pair p;
       p.i = i;
       p.j = j;
       pairs.push_back(p);
     }
+  }
+}
+
+void MD::check_pairlist(void) {
+  double vmax2 = 0.0;
+  for (auto &a: vars->atoms) {
+    double v2 = a.px*a.px + a.py*a.py + a.pz*a.pz;
+    if (vmax2 < v2) vmax2 = v2;
+  }
+  double vmax = sqrt(vmax2);
+  margin_length -= vmax*2.0*dt;
+  if (margin_length < 0.0) {
+    margin_length = MARGIN;
+    make_pair();
   }
 }
 
@@ -74,7 +89,7 @@ void MD::calculate_force(void) {
       double dz = atoms[j].qz - atoms[i].qz;
       adjust_periodic(dx, dy, dz);
       double r2 = (dx * dx + dy * dy + dz * dz);
-      if (r2 > CL2)continue;
+      if (r2 > ML2)continue;
       double r6 = r2 * r2 * r2;
       // r * (df/dr)
       double df = (24.0 * r6 - 48.0) / (r6 * r6 * r2) * dt;
@@ -93,23 +108,23 @@ void MD::calculate_force(void) {
 void MD::calculate_force_pair(void) {
   const int pp = pairs.size();
   Atom *atoms = vars->atoms.data();
-  for (int k = 0; k < pp; k++) {
+  for(int k=0;k<pp;k++){
     const int i = pairs[k].i;
     const int j = pairs[k].j;
     double dx = atoms[j].qx - atoms[i].qx;
     double dy = atoms[j].qy - atoms[i].qy;
     double dz = atoms[j].qz - atoms[i].qz;
     adjust_periodic(dx, dy, dz);
-    double r2 = (dx*dx + dy*dy + dz*dz);
-    if (r2 > CL2) continue;
-    double r6 = r2*r2*r2;
-    double df = (24.0 * r6 - 48.0) / (r6*r6*r2) * dt;
-    atoms[i].px += df*dx;
-    atoms[i].py += df*dy;
-    atoms[i].pz += df*dz;
-    atoms[j].px -= df*dx;
-    atoms[j].py -= df*dy;
-    atoms[j].pz -= df*dz;
+    double r2 = (dx * dx + dy * dy + dz * dz);
+    if (r2 > CL2)continue;
+    double r6 = r2 * r2 * r2;
+    double df = (24.0 * r6 - 48.0) / (r6 * r6 * r2) * dt;
+    atoms[i].px += df * dx;
+    atoms[i].py += df * dy;
+    atoms[i].pz += df * dz;
+    atoms[j].px -= df * dx;
+    atoms[j].py -= df * dy;
+    atoms[j].pz -= df * dz;
   }
 }
 
@@ -129,7 +144,7 @@ void MD::periodic(void) {
 
 void MD::calculate(void) {
   update_position();
-  make_pair();
+  check_pairlist();
   calculate_force_pair();
   update_position();
   periodic();

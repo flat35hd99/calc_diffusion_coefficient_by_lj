@@ -15,6 +15,7 @@ class MD {
   void periodic(void);
   void calculate(void);
   void make_pair(void);
+  void check_pairlist(void);
 
 public:
   MD(void);
