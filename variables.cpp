@@ -75,6 +75,16 @@ void Variables::export_velocity(void) {
   std::string filename = "output/velocity.csv";
   std::ofstream ofs;
   ofs.open(filename, std::ios::app);
+
+  if (count == 0) {
+    ofs << "index" << ", ";
+    for (int i = 0; i < static_cast<int>(atoms.size()); i++ ) {
+      ofs << "px" << i << ", ";
+      ofs << "py" << i << ", ";
+      ofs << "pz" << i << ", ";
+    }
+    ofs << std::endl;
+  }
   
   ofs << count << ", ";
   count++;
