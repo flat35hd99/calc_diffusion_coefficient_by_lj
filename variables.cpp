@@ -58,7 +58,7 @@ Variables::export_cdview(void) {
   static int count = 0;
   char filename[256];
   // Linux env is ok. on windows, it maybe not work. 
-  sprintf(filename, "conf%03d.cdv", count);
+  sprintf(filename, "output/conf%03d.cdv", count);
   ++count;
   std::ofstream ofs(filename);
   int i = 0;

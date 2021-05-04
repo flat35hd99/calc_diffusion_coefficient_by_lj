@@ -107,6 +107,6 @@ void MD::run(void) {
       std::cout << k + v << std::endl;
       vars->export_cdview();
     }
+    calculate();
   }
-  calculate();
 }
