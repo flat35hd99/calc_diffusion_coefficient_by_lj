@@ -46,7 +46,7 @@ void MD::make_pair(void){
       double dz = atoms[j].qz - atoms[i].qz;
       adjust_periodic(dx, dy, dz);
       double r2 = (dx * dx + dy * dy + dz * dz);
-      if (r2 > CL2)continue;
+      if (r2 > ML2)continue;
       Pair p;
       p.i = i;
       p.j = j;
