@@ -17,13 +17,13 @@ double Observer::potential_energy(Variables *vars) {
   const int pn = vars->number_of_atoms();
   Atom *atoms = vars->atoms.data();
   for (int i = 0; i < pn - 1; i++) {
-    for (int j = 0; j < pn; j++) {
+    for (int j = i + 1; j < pn; j++) {
       double dx = atoms[j].qx - atoms[i].qx;
       double dy = atoms[j].qy - atoms[i].qy;
       double dz = atoms[j].qz - atoms[i].qz;
       adjust_periodic(dx, dy, dz);
-      double r2 = (dx*dx + dy*dy + dz*dz);
-      if (r2 > CL2) continue;
+      double r2 = (dx * dx + dy * dy + dz * dz);
+      if (r2 > CL2)continue;
       double r6 = r2 * r2 * r2;
       double r12 = r6 * r6;
       v += 4.0 * (1.0 / r12 - 1.0 / r6) + C0;

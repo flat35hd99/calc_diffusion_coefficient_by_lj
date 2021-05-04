@@ -35,11 +35,11 @@ void MD::makeconf(void) {
 }
 
 void MD::update_position(void) {
-  const double hdt = dt * 0.5; // 1/2することが多いためあらかじめ1/2している。
+  const double dt2 = dt * 0.5;
   for (auto &a : vars->atoms) {
-    a.qx += a.px * hdt;
-    a.qy += a.qy * hdt;
-    a.qz += a.qz * hdt;
+    a.qx += a.px * dt2;
+    a.qy += a.py * dt2;
+    a.qz += a.pz * dt2;
   }
 }
 
@@ -48,29 +48,30 @@ void MD::calculate_force(void) {
   Atom *atoms = vars->atoms.data();
   // calculate all forces between particle_i and particle_j
   for (int i = 0; i < pn - 1; i++) {
-    for (int j = 1; j < pn; j++) {
+    for (int j = i + 1; j < pn; j++) {
       double dx = atoms[j].qx - atoms[i].qx;
       double dy = atoms[j].qy - atoms[i].qy;
       double dz = atoms[j].qz - atoms[i].qz;
       adjust_periodic(dx, dy, dz);
-      double r2 = (dx*dx + dy*dy + dz*dz);
-      if (r2 > CL2) continue;
+      double r2 = (dx * dx + dy * dy + dz * dz);
+      if (r2 > CL2)continue;
       double r6 = r2 * r2 * r2;
       // r * (df/dr)
       double df = (24.0 * r6 - 48.0) / (r6 * r6 * r2) * dt;
       // if force depends on velocity, this code is incorrect.
-      atoms[i].px += df*dx;
-      atoms[i].py += df*dy;
-      atoms[i].pz += df*dz;
-      atoms[j].px -= df*dx;
-      atoms[j].py -= df*dy;
-      atoms[j].pz -= df*dz;
+      // まあその場合今回の積分法は使えないので考慮しなくてよし。
+      atoms[i].px += df * dx;
+      atoms[i].py += df * dy;
+      atoms[i].pz += df * dz;
+      atoms[j].px -= df * dx;
+      atoms[j].py -= df * dy;
+      atoms[j].pz -= df * dz;
     }
   }
 }
 
 void MD::periodic(void) {
-  for (auto &a: vars->atoms) {
+  for (auto &a : vars->atoms) {
     if (a.qx < 0.0) a.qx += L;
     if (a.qy < 0.0) a.qy += L;
     if (a.qz < 0.0) a.qz += L;

@@ -16,8 +16,7 @@ Variables::add_atoms(double x, double y, double z) {
   atoms.push_back(a);
 }
 
-void
-Variables::set_initial_velocity(const double V0) {
+void Variables::set_initial_velocity(const double V0) {
   std::mt19937 mt(2); // 乱数生成器にseed=2入れてる
   std::uniform_real_distribution<double> ud(0.0, 1.0);
   double avx = 0.0;
@@ -35,7 +34,7 @@ Variables::set_initial_velocity(const double V0) {
     a.px = vx;
     a.py = vy;
     a.pz = vz;
-    // sumをいれてる。
+    // avi mean sum here.
     avx += vx;
     avy += vy;
     avz += vz;
