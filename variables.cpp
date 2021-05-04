@@ -4,8 +4,7 @@
 #include "systemparam.hpp"
 #include "variables.hpp"
 
-void
-Variables::add_atoms(double x, double y, double z) {
+void Variables::add_atoms(double x, double y, double z) {
   Atom a;
   a.qx = x;
   a.qy = y;
@@ -53,8 +52,7 @@ void Variables::set_initial_velocity(const double V0) {
 }
 
 // ここなんもわかってない。
-void
-Variables::export_cdview(void) {
+void Variables::export_cdview(void) {
   static int count = 0;
   char filename[256];
   // Linux env is ok. on windows, it maybe not work. 
