@@ -18,6 +18,7 @@ public:
   Variables(void) {time = 0.0;} // ?
   void add_atoms(double x, double y, double z); // もとだと三つ目がzになってた。
   void export_cdview(void);
+  void export_velocity(void);
   int number_of_atoms(void) { return static_cast<int>(atoms.size()); }
   void set_initial_velocity(const double);
 };

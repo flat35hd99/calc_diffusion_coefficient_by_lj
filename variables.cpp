@@ -69,3 +69,18 @@ void Variables::export_cdview(void) {
     ++i;
   }
 }
+
+void Variables::export_velocity(void) {
+  std::string filename = "output/velocity.csv";
+  std::ofstream ofs;
+  ofs.open(filename, std::ios::app);
+  int i = 0;
+  for (auto &a: atoms) {
+    ofs << i << ", ";
+    ofs << a.px << ", ";
+    ofs << a.py << ", ";
+    ofs << a.pz << ", ";
+    i++;
+  }
+  ofs << std::endl;
+}

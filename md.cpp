@@ -165,7 +165,8 @@ void MD::run(void) {
       std::cout << k << " ";
       std::cout << v << " ";
       std::cout << k + v << std::endl;
-      vars->export_cdview();
+      // vars->export_cdview();
+      vars->export_velocity();
     }
     calculate();
   }
