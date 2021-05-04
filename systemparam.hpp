@@ -3,6 +3,8 @@
 const double L = 10; // system size
 const double dt = 0.01; // 時間刻み
 const double CUTOFF = 2.0; // ポテンシャルのカットオフの距離。
+const double MARGIN = 0.5;
+const double ML2 = (CUTOFF+MARGIN)*(CUTOFF+MARGIN);
 const double CL2 = (CUTOFF*CUTOFF); // CUTOFF二乗
 const double RC2 = 1.0 / CL2; // Reciprocal of the square
 const double RC6 = RC2 * RC2 * RC2;

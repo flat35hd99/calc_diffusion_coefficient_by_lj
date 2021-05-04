@@ -6,6 +6,11 @@ struct Atom {
   double px, py, pz;
 };
 
+struct Pair {
+  int i, j;
+};
+
+
 class Variables {
 public:
   std::vector<Atom> atoms; // 名前空間でなにを予約宣言してるか不明
