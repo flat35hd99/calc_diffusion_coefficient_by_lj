@@ -77,21 +77,21 @@ void Variables::export_velocity(void) {
   ofs.open(filename, std::ios::app);
 
   if (count == 0) {
-    ofs << "index" << ", ";
+    ofs << "index" << ",";
     for (int i = 0; i < static_cast<int>(atoms.size()); i++ ) {
-      ofs << "px" << i << ", ";
-      ofs << "py" << i << ", ";
-      ofs << "pz" << i << ", ";
+      ofs << "px" << i << ",";
+      ofs << "py" << i << ",";
+      ofs << "pz" << i << ",";
     }
     ofs << std::endl;
   }
   
-  ofs << count << ", ";
+  ofs << count << ",";
   count++;
   for (auto &a: atoms) {
-    ofs << a.px << ", ";
-    ofs << a.py << ", ";
-    ofs << a.pz << ", ";
+    ofs << a.px << ",";
+    ofs << a.py << ",";
+    ofs << a.pz << ",";
   }
   ofs << std::endl;
 }
